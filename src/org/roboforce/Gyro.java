@@ -37,14 +37,15 @@ public class Gyro {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-        System.out.println(voltage);
-        double offsetVoltage = voltage-offset;
-        System.out.println("offsetVoltage = " + offsetVoltage);
-        double voltageInMillivolts = offsetVoltage*1000.0;
-        System.out.println("voltageInMillivolts =" + voltageInMillivolts);
-        double rateOfChange = voltageInMillivolts*scalingFactor;
-        System.out.println("rateOfChange = " + rateOfChange);
-        return rateOfChange;
+        return ((voltage - offset)*1000.0)/scalingFactor;
+//        System.out.println("voltage = " + voltage);
+//        double offsetVoltage = voltage-offset;
+//        System.out.println("offsetVoltage = " + offsetVoltage);
+//        double voltageInMillivolts = offsetVoltage*1000.0;
+//        System.out.println("voltageInMillivolts =" + voltageInMillivolts);
+//        double rateOfChange = voltageInMillivolts/scalingFactor;
+//        System.out.println("rateOfChange = " + rateOfChange);
+//        return rateOfChange;
     }
     
     public void setOffset(double offset){

@@ -8,6 +8,7 @@ package org.roboforce;
 
 
 import com.sun.spot.resources.Resources;
+import com.sun.spot.resources.transducers.IAnalogInput;
 import com.sun.spot.resources.transducers.IOutputPin;
 import com.sun.spot.resources.transducers.ISwitch;
 import com.sun.spot.resources.transducers.ITemperatureInput;
@@ -31,7 +32,7 @@ public class SunSpotApplication extends MIDlet {
 //        IOutputPin power = EDemoBoard.getInstance().getOutputPins()[1];
 //        power.setHigh();
 //        
-//        ISwitch sw1 = (ISwitch) Resources.lookup(ISwitch.class, "SW1");
+      ISwitch sw1 = (ISwitch) Resources.lookup(ISwitch.class, "SW1");
 //        ISwitch sw2 = (ISwitch) Resources.lookup(ISwitch.class, "SW2");
 //        
 //        while(true){
@@ -55,65 +56,91 @@ public class SunSpotApplication extends MIDlet {
         Gyro gyro = new Gyro(0, 0);
         gyro.setPowerOn(true);
         Utils.sleep(1000);
-        ITemperatureInput temp = EDemoBoard.getInstance().getADCTemperature();
+        ITemperatureInput tempInput = EDemoBoard.getInstance().getADCTemperature();
         IAccelerometer3D accel = EDemoBoard.getInstance().getAccelerometer();
         
         
-        double highest = 0;
-        double lowest = 0;
+        
+        
+        double offset = 1.23; //zero point at 25 degrees celsius
+        double zeroTempDelta = 0.00005; //v/degrees celcius
+        double nominalTemp = 25; //degrees celcius
+        double sensitivity = 2.5; //mv/degrees/second
+        double sensitivityTempDelta = 0.00925;//mv/degree celsius
+        
+        double tempDelta = 0.0;
+        
         double rateOfChange;
-        double offset = 0.0;
+        double temp = 0.0;
         for(int i = 0;i<100;i++){
-            offset+= gyro.getVoltage();
+            try {
+            temp += tempInput.getCelsius();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
             Utils.sleep(10);
         }
-        offset = offset/100.0;
-        System.out.println("offset = " + offset);
+        temp = (temp/100.0);
+        
+        tempDelta = temp - nominalTemp;
+        
+        offset += zeroTempDelta * tempDelta;
+        sensitivity += sensitivityTempDelta * tempDelta;
+        gyro.setScalingFactor(sensitivity);
+        
+        
+
         gyro.setOffset(offset);
         double angle = 0;
-        double wait = 500;
-        double[] buffer = {0.0,0.0,0.0,0.0,0.0};
+        double wait = 40;
         double accelTilt =0.0;
         
         
+        PWMMotorController mc = new PWMMotorController(670,2330,1); 
         
-        for(int i = 0;i<5000;i++){
+        int speed = 0;
+        
+        
+        while(true){
+//            System.out.println("TempDelta = " + tempDelta);
+//            System.out.println("Sensitivity = " + sensitivity);
+//            try{ 
+//                System.out.println("Ref = " + ref.getVoltage());
+//                System.out.println("Temp = " + tempInput.getCelsius());
+//            } catch (IOException ex) {
+//                ex.printStackTrace();
+//            }
+//            System.out.println("Offset = " + offset);
+            if (sw1.isClosed()){
+                angle = 0;
+            }
             double now = System.currentTimeMillis();
             rateOfChange = gyro.getRateOfChange();
             try {
-                accelTilt = accel.getAccelY()*(180/Math.PI);
+                accelTilt = accel.getTiltY()*57.2957795;
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
-            for(int j = 0; j < buffer.length; j++ ) {
-                if (j +1 < buffer.length) {
-                    buffer[j] = buffer[j + 1];
-                } else {
-                    buffer[j] = rateOfChange;
-                }
+            //System.out.println("RateOfChange = " + rateOfChange);
+            //System.out.println("AccelTilt = " + accelTilt);
+            angle = (angle + rateOfChange * 0.04) * 0.98 + 0.02 * accelTilt; 
+//            angle += rateOfChange *  0.04;
+            System.out.println("angle = " + angle +", RateOfChange = " + rateOfChange + ", AccelTilt = " + accelTilt);
+            
+            speed = (int)(angle);
+            
+            if(speed > 100){
+                speed = 100;
+            } 
+            
+            if(speed < -100){
+                speed = -100;
             }
             
-            System.out.println("buffer = " + buffer[0] + "," + buffer[4]);
+            mc.setSpeed(speed);
             
-            angle = ((((buffer[0] + buffer[1] + buffer[2] + buffer[3] + buffer[4])/5)/2.0)+angle)*.98 + accelTilt*-.02;
-            System.out.println("accelTilt = " + accelTilt);
-            System.out.println("angle = " + angle);
-            try {
-                System.out.println("temp = " + temp.getCelsius());
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-//            System.out.println("rateOfChange = " + rateOfChange);
-//            if(rateOfChange > highest){
-//                highest = rateOfChange;
-//            }
-//            if(rateOfChange < lowest){
-//                lowest = rateOfChange;
-//            }
             Utils.sleep((long)(wait-(System.currentTimeMillis()-now)));
         }
-        System.out.println("Lowest "+ lowest);
-        System.out.println("Highest "+ highest);
 //End of Gyro Test        
     }
 
