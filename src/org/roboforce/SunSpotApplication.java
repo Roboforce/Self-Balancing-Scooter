@@ -7,6 +7,7 @@
 package org.roboforce;
 
 
+import org.roboforce.segway.sensors.Gyro;
 import com.sun.spot.resources.Resources;
 import com.sun.spot.resources.transducers.IAnalogInput;
 import com.sun.spot.resources.transducers.IOutputPin;

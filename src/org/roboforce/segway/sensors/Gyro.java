@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.roboforce;
+package org.roboforce.segway.sensors;
 
 import com.sun.spot.resources.transducers.IAnalogInput;
 import com.sun.spot.resources.transducers.IOutputPin;
