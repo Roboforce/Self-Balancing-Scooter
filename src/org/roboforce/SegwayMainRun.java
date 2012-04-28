@@ -1,5 +1,5 @@
 /*
- * SunSpotApplication.java
+ * SegwayMainRun.java
  *
  * Created on Feb 21, 2012 11:20:56 PM;
  */
@@ -21,7 +21,7 @@ import javax.microedition.midlet.MIDlet;
 import javax.microedition.midlet.MIDletStateChangeException;
 
 
-public class SunSpotApplication extends MIDlet {
+public class SegwayMainRun extends MIDlet {
 
     protected void startApp() throws MIDletStateChangeException {
 
@@ -97,7 +97,8 @@ public class SunSpotApplication extends MIDlet {
         double accelTilt =0.0;
         
         
-        PWMMotorController mc = new PWMMotorController(670,2330,1); 
+        PWMMotorController port = new PWMMotorController(670,2330,1); 
+        PWMMotorController starboard = new PWMMotorController(670,2330,1); 
         
         int speed = 0;
         
@@ -126,9 +127,9 @@ public class SunSpotApplication extends MIDlet {
             //System.out.println("AccelTilt = " + accelTilt);
             angle = (angle + rateOfChange * 0.04) * 0.98 + 0.02 * accelTilt; 
 //            angle += rateOfChange *  0.04;
-            System.out.println("angle = " + angle +", RateOfChange = " + rateOfChange + ", AccelTilt = " + accelTilt);
+     //       System.out.println("angle = " + angle +", RateOfChange = " + rateOfChange + ", AccelTilt = " + accelTilt);
             
-            speed = (int)(angle);
+            speed = (int) (angle*angle*angle/2);
             
             if(speed > 100){
                 speed = 100;
@@ -138,7 +139,8 @@ public class SunSpotApplication extends MIDlet {
                 speed = -100;
             }
             
-            mc.setSpeed(speed);
+            port.setSpeed(speed);
+            starboard.setSpeed(speed);
             
             Utils.sleep((long)(wait-(System.currentTimeMillis()-now)));
         }

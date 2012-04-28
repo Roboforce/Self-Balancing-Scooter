@@ -2,6 +2,7 @@ MIDlet-Name: Segway
 MIDlet-Version: 1.0.0
 MIDlet-Vendor: Your Organization
 MIDlet-Description: Sample Sun SPOT Application
-MIDlet-1: SunSpotApplication, , org.roboforce.SunSpotApplication
+MIDlet-1: SegwayMainRun, , org.roboforce.SegwayMainRun
+MIDlet-2: LoggerBaseMidlet, , org.roboforce.LoggerBaseMidlet
 MicroEdition-Profile: IMP-1.0
 MicroEdition-Configuration: CLDC-1.1
