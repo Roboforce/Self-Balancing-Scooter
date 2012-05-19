@@ -15,6 +15,8 @@ import java.io.IOException;
  * @author peter
  */
 public class Gyro {
+    
+    private static final double V_TO_MV = 1000.0; // Volts to millavolts
     private IAnalogInput gyro;
     private double voltage;
     private IOutputPin power;
@@ -33,11 +35,11 @@ public class Gyro {
     public double getRateOfChange(){
         try {
             voltage = gyro.getVoltage();
-//            System.out.println("voltage" + voltage );
+            System.out.println("Gyro V is " + voltage );
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-        return ((voltage - offset)*1000.0)/scalingFactor;
+        return ((voltage - offset) * V_TO_MV)/scalingFactor;
 //        System.out.println("voltage = " + voltage);
 //        double offsetVoltage = voltage-offset;
 //        System.out.println("offsetVoltage = " + offsetVoltage);

@@ -47,7 +47,7 @@ public class PWMMotorController {
         this.speed = speed;
         pulseWidth = this.speed * increment + offset;
         servo.setValue(pulseWidth);
-        System.out.println("Pulse Width = " + pulseWidth);
+        //System.out.println(/*"Pulse Width = " + pulseWidth +"Increment="+increment*/ "");
     }
     
     
