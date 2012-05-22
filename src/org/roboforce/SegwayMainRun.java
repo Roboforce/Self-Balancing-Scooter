@@ -37,6 +37,8 @@ public class SegwayMainRun extends MIDlet {
     private ITriColorLEDArray leds       = (ITriColorLEDArray) Resources.lookup(ITriColorLEDArray.class);
 
     protected void startApp() throws MIDletStateChangeException {
+        leds.getLED(4).setOn();
+        leds.getLED(4).setColor(LEDColor.GREEN);
         
 
 //start motorcontroller test        
@@ -177,7 +179,8 @@ public class SegwayMainRun extends MIDlet {
             
             Utils.sleep((long)(wait-(System.currentTimeMillis()-now)));
         }
-//End of Gyro Test      
+//End of Gyro Test  
+        leds.getLED(1).setOn();
         leds.getLED(0).setColor(LEDColor.BLUE);
     }
 
