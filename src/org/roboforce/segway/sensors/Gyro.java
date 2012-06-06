@@ -35,7 +35,7 @@ public class Gyro {
     public double getRateOfChange(){
         try {
             voltage = gyro.getVoltage();
-            System.out.println("Gyro V is " + voltage );
+         //   System.out.println("Gyro V is " + voltage );
         } catch (IOException ex) {
             ex.printStackTrace();
         }

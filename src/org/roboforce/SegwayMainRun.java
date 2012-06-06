@@ -2,6 +2,12 @@
  * SegwayMainRun.java
  *
  * Created on Feb 21, 2012 11:20:56 PM;
+ * 
+ * 
+ * Let's add:
+ * Reporting for:
+ * min and max gyro and accell readings
+ * loop speed
  */
 
 package org.roboforce;
@@ -27,7 +33,7 @@ import javax.microedition.midlet.MIDletStateChangeException;
 public class SegwayMainRun extends MIDlet {
     
     public static final double RADIANS_TO_DEGREES = 57.2957795;
-    public static final double ACCEL_WEIGHT_FACTOR = 0.02; //Make sure this and GYRO WEIGHT sum up to 1
+    public static final double ACCEL_WEIGHT_FACTOR = 0.0; //Make sure this and GYRO WEIGHT sum up to 1
     public static final double GYRO_WEIGHT_FACTOR = 1.0 - ACCEL_WEIGHT_FACTOR;
     public static final int PWM_MIN = 670;
     public static final int PWM_MAX = 2330;
@@ -38,7 +44,11 @@ public class SegwayMainRun extends MIDlet {
 
     protected void startApp() throws MIDletStateChangeException {
         leds.getLED(4).setOn();
-        leds.getLED(4).setColor(LEDColor.GREEN);
+        leds.getLED(4).setColor(LEDColor.YELLOW);
+        leds.getLED(3).setOn();
+        leds.getLED(3).setColor(LEDColor.YELLOW);
+        leds.getLED(2).setOn();
+        leds.getLED(2).setColor(LEDColor.YELLOW);
         
 
 //start motorcontroller test        
@@ -49,7 +59,11 @@ public class SegwayMainRun extends MIDlet {
 //        IOutputPin power = EDemoBoard.getInstance().getOutputPins()[1];
 //        power.setHigh();
 //        
-      ISwitch sw1 = (ISwitch) Resources.lookup(ISwitch.class, "SW1");
+     // IAnalogInput switch1 = EDemoBoard.getInstance().getAnalogInputs()[0];
+       // IAnalogInput switch2 = EDemoBoard.getInstance().getAnalogInputs()[1];
+        
+        ISwitch sw1 = (ISwitch) Resources.lookup(ISwitch.class, "SW1");
+        ISwitch sw2 = (ISwitch) Resources.lookup(ISwitch.class, "SW2");
 //        ISwitch sw2 = (ISwitch) Resources.lookup(ISwitch.class, "SW2");
 //        
 //        while(true){
@@ -72,24 +86,18 @@ public class SegwayMainRun extends MIDlet {
 //Start of Gyro Test        
         Gyro gyro = new Gyro(0, 0);
         gyro.setPowerOn(true);
-        Utils.sleep(1000);
+        Utils.sleep(700);
+        leds.getLED(2).setColor(LEDColor.GREEN);
         ITemperatureInput tempInput = EDemoBoard.getInstance().getADCTemperature();
         IAccelerometer3D accel = EDemoBoard.getInstance().getAccelerometer();
-        
-        
-        
-        
         double offset = 1.23; //zero point at 25 degrees celsius
         double zeroTempDelta = 0.00005; //v/degrees celcius
         double nominalTemp = 25; //degrees celcius
         double sensitivity = 2.5; //mv/degrees/second
         double sensitivityTempDelta = 0.00925;//mv/degree celsius
-        
         double tempDelta = 0.0;
-        
         double rateOfChange;
         double temp = 0.0;
-        
         int loopcount1 = 100;
         for(int i = 0;i<loopcount1;i++){ //average temp input
             try {
@@ -97,34 +105,59 @@ public class SegwayMainRun extends MIDlet {
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
-            Utils.sleep(10);
+            //Utils.sleep(10);
         }
+        Utils.sleep(700);
+        leds.getLED(3).setColor(LEDColor.GREEN);
         temp = (temp/loopcount1);
-        
         tempDelta = temp - nominalTemp;
-        
         offset += zeroTempDelta * tempDelta;
         sensitivity += sensitivityTempDelta * tempDelta;
         gyro.setScalingFactor(sensitivity);
-        
-        
-
         gyro.setOffset(offset);
         double angle = 0;
-        double wait = 40;
+        int wait = 9;
         double accelTilt =0.0;
-        
-        
         PWMMotorController port = new PWMMotorController(PWM_MIN,PWM_MAX,1); 
         PWMMotorController starboard = new PWMMotorController(PWM_MIN,PWM_MAX,2); 
-        
         int speed = 0;
+        Utils.sleep(700);
         
         
-        while(true){
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        long countedMillis=System.currentTimeMillis();
+        //long currentTimeInMillis = System.currentTimeMillis();
+        //long timeElapsed = currentTimeInMillis-countedMillis;
+        int loops=0;
+        leds.getLED(4).setColor(LEDColor.GREEN);
+        //while(true){
+        for(int i = 0; i<2000; i++){
+            
+           
+           
 //            System.out.println("TempDelta = " + tempDelta);
 //            System.out.println("Sensitivity = " + sensitivity);
-//            try{ 
+//            try{ sleep
 //                System.out.println("Ref = " + ref.getVoltage());
 //                System.out.println("Temp = " + tempInput.getCelsius());
 //            } catch (IOException ex) {
@@ -133,8 +166,12 @@ public class SegwayMainRun extends MIDlet {
 //            System.out.println("Offset = " + offset);
             if (sw1.isClosed()){
                 angle = 0; //
+        
+        
+        
+        
             }
-            double now = System.currentTimeMillis();
+            long now = System.currentTimeMillis();
             rateOfChange = gyro.getRateOfChange();
             try {
                 accelTilt = accel.getTiltY()*RADIANS_TO_DEGREES;
@@ -146,9 +183,9 @@ public class SegwayMainRun extends MIDlet {
             //System.out.println("AccelTilt = " + accelTilt);
             angle = ((angle + rateOfChange * SAMPLE_DURATION_SEC) * GYRO_WEIGHT_FACTOR) + (ACCEL_WEIGHT_FACTOR * accelTilt); 
 //            angle += rateOfChange *  0.04;
-            System.out.println("angle = " + angle +", RateOfChange = " + rateOfChange + ", AccelTilt = " + accelTilt);
+            //System.out.println("angle = " + angle +", RateOfChange = " + rateOfChange + ", AccelTilt = " + accelTilt);
             
-            speed = (int) (angle*angle/2);
+            speed = (int) (angle*angle*angle*2);
             
             if(speed > 100){
                 speed = 100;
@@ -157,12 +194,13 @@ public class SegwayMainRun extends MIDlet {
             if(speed < -100){
                 speed = -100;
             }
-            
+            /*
             //Use this bit to cut the program if things get out of hand
             if(angle > CUTOFF_ANGLE){
                
                 speed = 0; 
-                port.setSpeed(0); //Make it stop doing things!
+                port.setSpeed(0);
+                starboard.setSpeed(0);//Make it stop doing things!
                 break;
             }
             
@@ -170,18 +208,32 @@ public class SegwayMainRun extends MIDlet {
                 //MIDl2
                 //et.notifyDestroyed();
                 speed = 0;
-                port.setSpeed(0); // Stop making it do stuff even when negative!
+                port.setSpeed(0);
+                starboard.setSpeed(0);// Stop making it do stuff even when negative!
+                break;
+            }*/
+            
+            port.setSpeed(speed);//double now = System.currentTimeMillis();
+            starboard.setSpeed(speed*-1);
+            
+            if (sw1.isClosed()&&sw2.isClosed()){
                 break;
             }
             
-            port.setSpeed(speed);
-            starboard.setSpeed(speed*-1);
-            
             Utils.sleep((long)(wait-(System.currentTimeMillis()-now)));
+            
         }
+        
+        
+        
+        
 //End of Gyro Test  
-        leds.getLED(1).setOn();
-        leds.getLED(0).setColor(LEDColor.BLUE);
+        long endtime = System.currentTimeMillis();
+        System.out.println(endtime - countedMillis);
+        for(int i = 0; i < leds.size(); i++){
+            leds.getLED(i).setOn();                    // Enable this LED
+            leds.getLED(i).setColor(LEDColor.RED);              // Set it to black
+        }
     }
 
     protected void pauseApp() {
