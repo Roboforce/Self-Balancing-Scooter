@@ -150,8 +150,10 @@ public class SegwayMainRun extends MIDlet {
         //long timeElapsed = currentTimeInMillis-countedMillis;
         int loops=0;
         leds.getLED(4).setColor(LEDColor.GREEN);
-        //while(true){
-        for(int i = 0; i<2000; i++){
+        int broadcastCount=0;
+        
+        while(true){
+        //for(int i = 0; i<2000; i++){
             
            
            
@@ -218,6 +220,14 @@ public class SegwayMainRun extends MIDlet {
             
             if (sw1.isClosed()&&sw2.isClosed()){
                 break;
+            }
+            
+            loops++;
+            broadcastCount++;
+            
+            if (broadcastCount==10){
+                
+                broadcastCount=0;
             }
             
             Utils.sleep((long)(wait-(System.currentTimeMillis()-now)));
