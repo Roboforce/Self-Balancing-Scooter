@@ -13,6 +13,15 @@ public class LogRecord{
     private double gyroRateY;
     private double accelAngleY;
     private double calculatedAngleY;
+    private int motorSpeed;
+
+    public void setMotorSpeed(int motorSpeed) {
+        this.motorSpeed = motorSpeed;
+    }
+
+    public int getMotorSpeed() {
+        return motorSpeed;
+    }
 
     public double getAccelAngleY() {
         return accelAngleY;
