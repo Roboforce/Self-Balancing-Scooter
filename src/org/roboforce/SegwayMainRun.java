@@ -28,6 +28,7 @@ import com.sun.spot.util.Utils;
 import java.io.IOException;
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.midlet.MIDletStateChangeException;
+import org.roboforce.segway.loggers.LogRecord;
 
 
 public class SegwayMainRun extends MIDlet {
@@ -77,7 +78,7 @@ public class SegwayMainRun extends MIDlet {
 //                    speed+=-1;
 //                }
 //            }
-//            mc.setSpeed(speed);
+//            mc.setSpeed(speed);speed = (int) (angle*angle*angle*2);
 //            System.out.println(speed);
 //            Utils.sleep(50);
 //        }
@@ -122,26 +123,7 @@ public class SegwayMainRun extends MIDlet {
         PWMMotorController starboard = new PWMMotorController(PWM_MIN,PWM_MAX,2); 
         int speed = 0;
         Utils.sleep(700);
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+        LogRecord logRecord = new LogRecord();
         
         
         
@@ -167,7 +149,7 @@ public class SegwayMainRun extends MIDlet {
 //            }
 //            System.out.println("Offset = " + offset);
             if (sw1.isClosed()){
-                angle = 0; //
+                angle = 0; //speed = (int) (angle*angle*angle*2);
         
         
         
@@ -215,7 +197,7 @@ public class SegwayMainRun extends MIDlet {
                 break;
             }*/
             
-            port.setSpeed(speed);//double now = System.currentTimeMillis();
+            port.setSpeed(speed);//double now = System.currentTimeMillis();ord
             starboard.setSpeed(speed*-1);
             
             if (sw1.isClosed()&&sw2.isClosed()){
@@ -229,6 +211,11 @@ public class SegwayMainRun extends MIDlet {
                 
                 broadcastCount=0;
             }
+            
+            logRecord.setAccelAngleY(accelTilt);
+            logRecord.setCalculatedAngleY(angle);
+            logRecord.setMotorSpeed(speed);
+            logRecord.setGyroRateY(rateOfChange);
             
             Utils.sleep((long)(wait-(System.currentTimeMillis()-now)));
             
